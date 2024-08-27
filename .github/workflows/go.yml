@@ -36,7 +36,6 @@ jobs:
     - name: Build binary
       shell: bash
       run: |
-        # Map runner labels to Go OS values
         case ${{ matrix.os }} in
           ubuntu-latest)
             GOOS=linux
@@ -60,6 +59,9 @@ jobs:
         fi
         mkdir -p $(dirname $output)
         GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
+        
+        # Debugging: List the contents of the build directory
+        ls -R build/
 
     - name: Upload Build Artifacts
       uses: actions/upload-artifact@v3
