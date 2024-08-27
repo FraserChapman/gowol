@@ -61,8 +61,6 @@ jobs:
         GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
 
     - name: Commit and Push Binaries to Repo
-      env:
-        PAT: ${{ secrets.PAT }}
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "actions@github.com"
@@ -71,4 +69,5 @@ jobs:
         cp -r build/* bin/
         git add bin/
         git commit -m "Add build binaries"
-        git push https://PAT@github.com/FraserChapman/gowol.git build-binaries
+        git push
+      continue-on-error: true
