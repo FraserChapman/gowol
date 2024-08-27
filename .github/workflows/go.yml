@@ -35,14 +35,29 @@ jobs:
 
     - name: Build binary
       run: |
-        GOOS=${{ matrix.os }}
+        # Map runner labels to Go OS values
+        case ${{ matrix.os }} in
+          ubuntu-latest)
+            GOOS=linux
+            ;;
+          windows-latest)
+            GOOS=windows
+            ;;
+          macos-latest)
+            GOOS=darwin
+            ;;
+          *)
+            echo "Unsupported OS"
+            exit 1
+            ;;
+        esac
+        
         GOARCH=amd64
         output="build/${GOOS}_${GOARCH}/gowol"
-        if [[ $GOOS == "windows-latest" ]]; then
+        if [[ $GOOS == "windows" ]]; then
           output+=".exe"
         fi
         mkdir -p $(dirname $output)
-        GOOS=$(echo $GOOS | sed 's/-latest//') # Convert 'ubuntu-latest' to 'linux', 'windows-latest' to 'windows', 'macos-latest' to 'darwin'
         GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
 
     - name: Upload Build Artifacts
