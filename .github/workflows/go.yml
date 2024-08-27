@@ -35,13 +35,14 @@ jobs:
 
     - name: Build binary
       run: |
-        GOOS=$(echo ${{ matrix.os }} | cut -d'-' -f1)
+        GOOS=${{ matrix.os }}
         GOARCH=amd64
         output="build/${GOOS}_${GOARCH}/gowol"
-        if [[ $GOOS == "windows" ]]; then
+        if [[ $GOOS == "windows-latest" ]]; then
           output+=".exe"
         fi
         mkdir -p $(dirname $output)
+        GOOS=$(echo $GOOS | sed 's/-latest//') # Convert 'ubuntu-latest' to 'linux', 'windows-latest' to 'windows', 'macos-latest' to 'darwin'
         GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
 
     - name: Upload Build Artifacts
