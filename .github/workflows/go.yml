@@ -1,0 +1,52 @@
+name: Build and Test Binaries
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        go-version: [1.22]
+
+    steps:
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: ${{ matrix.go-version }}
+
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Get dependencies
+      run: go mod tidy
+
+    - name: Run tests
+      run: |
+        go test ./... -v
+
+    - name: Build binary
+      run: |
+        GOOS=$(echo ${{ matrix.os }} | cut -d'-' -f1)
+        GOARCH=amd64
+        output="build/${GOOS}_${GOARCH}/gowol"
+        if [[ $GOOS == "windows" ]]; then
+          output+=".exe"
+        fi
+        mkdir -p $(dirname $output)
+        GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: gowol-binaries-${{ matrix.os }}
+        path: build/
