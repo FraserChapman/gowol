@@ -26,6 +26,8 @@ jobs:
 
     - name: Check out code
       uses: actions/checkout@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Get dependencies
       run: go mod tidy
@@ -69,5 +71,5 @@ jobs:
         cp -r build/* bin/
         git add bin/
         git commit -m "Add build binaries"
-        git push
+        git push --set-upstream origin build-binaries
       continue-on-error: true
