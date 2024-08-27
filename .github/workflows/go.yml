@@ -34,6 +34,7 @@ jobs:
       run: go test ./... -v
 
     - name: Build binary
+      shell: bash
       run: |
         # Map runner labels to Go OS values
         case ${{ matrix.os }} in
