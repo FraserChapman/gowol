@@ -25,7 +25,7 @@ jobs:
         go-version: ${{ matrix.go-version }}
 
     - name: Check out code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Get dependencies
       run: go mod tidy
@@ -35,33 +35,33 @@ jobs:
 
     - name: Build binary
       run: |
-        # Map runner labels to Go OS values
-        case ${{ matrix.os }} in
-          ubuntu-latest)
-            GOOS=linux
-            ;;
-          windows-latest)
-            GOOS=windows
-            ;;
-          macos-latest)
+        if [ ${{ matrix.os }} == "ubuntu-latest" ] || [ ${{ matrix.os }} == "macos-latest" ]; then
+          # Unix-like OS (Linux or macOS)
+          GOOS=linux
+          if [ ${{ matrix.os }} == "macos-latest" ]; then
             GOOS=darwin
-            ;;
-          *)
-            echo "Unsupported OS"
-            exit 1
-            ;;
-        esac
-        
-        GOARCH=amd64
-        output="build/${GOOS}_${GOARCH}/gowol"
-        if [[ $GOOS == "windows" ]]; then
-          output+=".exe"
+          fi
+          GOARCH=amd64
+          output="build/${GOOS}_${GOARCH}/gowol"
+          if [ $GOOS == "windows" ]; then
+            output+=".exe"
+          fi
+          mkdir -p $(dirname $output)
+          GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
+        elif [ ${{ matrix.os }} == "windows-latest" ]; then
+          # Windows OS
+          $env:GOOS="windows"
+          $env:GOARCH="amd64"
+          $output="build/windows_amd64/gowol.exe"
+          mkdir -p (Split-Path -Path $output -Parent)
+          go build -o $output .
+        else
+          echo "Unsupported OS"
+          exit 1
         fi
-        mkdir -p $(dirname $output)
-        GOOS=$GOOS GOARCH=$GOARCH go build -o $output .
 
     - name: Upload Build Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: gowol-binaries-${{ matrix.os }}
         path: build/
