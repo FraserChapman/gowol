@@ -30,7 +30,7 @@ gowol [options]
 
 - `-mac` The MAC address of the target device (required in send mode).
 - `-broadcast` The broadcast address to send the WOL packet to (default: `192.168.1.255:9`).
-- `-mode` "send" to send WOL packets, "receive" to listen for WOL packets (default: `"send"`).
+- `-mode` `send` to send WOL packets, `receive` to listen for WOL packets (default: `send`).
 - `-port` The UDP port to listen on for incoming WOL packets (default: `9`).
 
 ### Examples
