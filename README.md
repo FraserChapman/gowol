@@ -1,4 +1,5 @@
-# gowol
+# gowol [![Go Reference](https://pkg.go.dev/badge/github.com/FraserChapman/gowol.svg)](https://pkg.go.dev/github.com/FraserChapman/gowol) [![](https://goreportcard.com/badge/github.com/FraserChapman/gowol)](https://goreportcard.com/report/github.com/FraserChapman/gowol)
+
 
 Go-based Wake-on-LAN (WOL) tool with cross-platform support for Linux, Windows, and macOS
 
